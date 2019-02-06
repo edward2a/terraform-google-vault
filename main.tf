@@ -67,7 +67,9 @@ module "vault-server" {
 
 resource "google_storage_bucket" "vault" {
   name     = "${var.storage_bucket}"
-  location = "US"
+
+  storage_class = "REGIONAL"
+  location = "${var.region}"
 
   // delete bucket and contents on destroy.
   force_destroy = "${var.force_destroy_bucket}"

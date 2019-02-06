@@ -77,7 +77,9 @@ resource "google_storage_bucket" "vault" {
 
 resource "google_storage_bucket" "vault-assets" {
   name     = "${var.storage_bucket}-assets"
-  location = "US"
+
+  storage_class = "REGIONAL"
+  location = "${var.region}"
 
   // delete bucket and contents on destroy.
   force_destroy = "${var.force_destroy_bucket}"

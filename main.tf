@@ -46,6 +46,8 @@ module "vault-server" {
   http_health_check     = false
   region                = "${var.region}"
   zone                  = "${var.zone}"
+  network               = "${var.network}"
+  subnetwork            = "${var.subnetwork}"
   name                  = "vault-${var.region}"
   machine_type          = "${var.machine_type}"
   compute_image         = "debian-cloud/debian-9"
@@ -112,7 +114,7 @@ data "external" "sa-key-encrypted" {
 // Upload the service account key to the assets bucket.
 resource "google_storage_bucket_object" "vault-sa-key" {
   name         = "vault_sa_key.json.encrypted.base64"
-  content      = "${file(data.external.sa-key-encrypted.result["file"])}"
+  source       = "${data.external.sa-key-encrypted.result.file}"
   content_type = "application/octet-stream"
   bucket       = "${google_storage_bucket.vault-assets.name}"
   
@@ -243,7 +245,7 @@ data "external" "vault-ca-cert-encrypted" {
 // Upload the CA cert to the assets bucket.
 resource "google_storage_bucket_object" "vault-ca-cert" {
   name         = "vault-server.ca.crt.pem.encrypted.base64"
-  content      = "${file(data.external.vault-ca-cert-encrypted.result["file"])}"
+  source       = "${data.external.vault-ca-cert-encrypted.result.file}"
   content_type = "application/octet-stream"
   bucket       = "${google_storage_bucket.vault-assets.name}"
   
@@ -269,7 +271,7 @@ data "external" "vault-tls-key-encrypted" {
 // Upload the server key to the assets bucket.
 resource "google_storage_bucket_object" "vault-tls-key" {
   name         = "vault-server.key.pem.encrypted.base64"
-  content      = "${file(data.external.vault-tls-key-encrypted.result["file"])}"
+  source       = "${data.external.vault-tls-key-encrypted.result.file}"
   content_type = "application/octet-stream"
   bucket       = "${google_storage_bucket.vault-assets.name}"
   
@@ -295,7 +297,7 @@ data "external" "vault-tls-cert-encrypted" {
 // Upload the server key to the assets bucket.
 resource "google_storage_bucket_object" "vault-tls-cert" {
   name         = "vault-server.crt.pem.encrypted.base64"
-  content      = "${file(data.external.vault-tls-cert-encrypted.result["file"])}"
+  source       = "${data.external.vault-tls-cert-encrypted.result.file}"
   content_type = "application/octet-stream"
   bucket       = "${google_storage_bucket.vault-assets.name}"
   

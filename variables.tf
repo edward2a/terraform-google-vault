@@ -29,7 +29,7 @@ variable network {
 
 variable subnetwork {
   description = "The subnetwork to deploy to"
-  default     = "default"
+  default     = ""
 }
 
 variable region {

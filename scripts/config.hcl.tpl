@@ -9,3 +9,5 @@ storage "gcs" {
   bucket           = "${storage_bucket}"
   credentials_file = "/etc/vault/gcp_credentials.json"
 }
+
+ui = "true"

@@ -41,7 +41,7 @@ data "template_file" "vault-config" {
 }
 
 module "vault-server" {
-  source                = "GoogleCloudPlatform/managed-instance-group/google"
+  source                = "github.com/edward2a/terraform-google-managed-instance-group?ref=v1.1.16"
   version               = "1.1.13"
   http_health_check     = false
   region                = "${var.region}"

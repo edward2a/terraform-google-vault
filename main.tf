@@ -125,51 +125,21 @@ resource "google_storage_bucket_object" "vault-sa-key" {
   }
 }
 
-resource "google_project_iam_policy" "vault" {
-  project     = "${var.project_id}"
-  policy_data = "${data.google_iam_policy.vault.policy_data}"
+locals {
+  vault_roles = [
+    "roles/storage.admin",
+    "roles/iam.serviceAccountUser",
+    "roles/iam.serviceAccountKeyAdmin",
+    "roles/cloudkms.cryptoKeyEncrypterDecrypter",
+    "roles/logging.logWriter"
+  ]
 }
 
-data "google_iam_policy" "vault" {
-  binding {
-    role = "roles/storage.admin"
-
-    members = [
-      "serviceAccount:${google_service_account.vault-admin.email}",
-    ]
-  }
-
-  binding {
-    role = "roles/iam.serviceAccountActor"
-
-    members = [
-      "serviceAccount:${google_service_account.vault-admin.email}",
-    ]
-  }
-
-  binding {
-    role = "roles/iam.serviceAccountKeyAdmin"
-
-    members = [
-      "serviceAccount:${google_service_account.vault-admin.email}",
-    ]
-  }
-
-  binding {
-    role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-
-    members = [
-      "serviceAccount:${google_service_account.vault-admin.email}",
-    ]
-  }
-
-  binding {
-    role = "roles/logging.logWriter"
-
-    members = [
-      "serviceAccount:${google_service_account.vault-admin.email}",
-    ]
-  }
+resource "google_project_iam_member" "project" {
+  count   = "${length(local.vault_roles)}"
+  project = "${var.project_id}"
+  role    = "${local.vault_roles[count.index]}"
+  member  = "serviceAccount:${google_service_account.vault-admin.email}"
 }
 
 // TLS resources

@@ -5,6 +5,7 @@
 * Bucket objects were failign with content so switched to source
 * Add HTTPS listener and self signed cert in nginx
 * Enable UI
+* Change to MIG fork
 
 ## v1.0.1
 * Bucket: do regional by default and use var.region instead of multi-region/US (seriously?!)

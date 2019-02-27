@@ -66,6 +66,13 @@ export VAULT_ADDR=https://127.0.0.1:8200
 export VAULT_CACERT=/etc/vault/vault-server.ca.crt.pem
 export VAULT_CLIENT_CERT=/etc/vault/vault-server.crt.pem
 export VAULT_CLIENT_KEY=/etc/vault/vault-server.key.pem
+export NAT_IP=$(curl -sf -H 'Metadata-Flavor:Google' http://169.254.169.254/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)
+
+# Generate and install NGINX SSL certs
+openssl genrsa -out nginx_key.pem 2048
+openssl req -x509 -key nginx_key.pem -out nginx_cert.pem -subj "/C=GB/ST=London/O=Real ReadMe Limited/CN=$${NAT_IP}"
+mkdir /etc/nginx/ssl
+mv nginx*.pem /etc/nginx/ssl
 
 # Add health-check proxy, GCE doesn't support https health checks.
 cat - > /etc/nginx/sites-available/default <<EOF
@@ -76,6 +83,22 @@ server {
     }
 }
 EOF
+
+# Add SSL rproxy for vault
+cat>/etc/nginx/sites-enabled/default-ssl<<EOF
+server {
+    listen              443 ssl;
+    ssl_certificate     /etc/nginx/ssl/nginx_cert.pem;
+    ssl_certificate_key /etc/nginx/ssl/nginx_key.pem;
+    ssl_protocols       TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+
+    location / {
+        proxy_pass https://127.0.0.1:8200;
+    }
+}
+EOF
+
 systemctl enable nginx
 systemctl restart nginx
 

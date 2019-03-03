@@ -106,3 +106,12 @@ variable tls_ou {
   description = "The TLS Organizational Unit for the TLS certificate"
   default     = "IT Security Operations"
 }
+
+variable update_policy {
+  description = "The update policy for the managed instance group that controls vault instances"
+  type        = "map"
+  default     = {
+    type            = "PROACTIVE"
+    minimal_action  = "REPLACE"
+  }
+}

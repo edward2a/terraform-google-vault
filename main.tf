@@ -41,7 +41,7 @@ data "template_file" "vault-config" {
 }
 
 module "vault-server" {
-  source                = "github.com/edward2a/terraform-google-managed-instance-group?ref=v1.1.16"
+  source                = "github.com/edward2a/terraform-google-managed-instance-group?ref=v1.1.17"
   http_health_check     = false
   region                = "${var.region}"
   zone                  = "${var.zone}"
@@ -64,6 +64,8 @@ module "vault-server" {
   service_port      = "80"
   service_port_name = "hc"
   startup_script    = "${data.template_file.vault-startup-script.rendered}"
+
+  update_policy     = ["${var.update_policy}"]
 }
 
 resource "google_storage_bucket" "vault" {

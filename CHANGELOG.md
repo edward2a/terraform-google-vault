@@ -3,6 +3,7 @@
 ## v1.1.0
 * Updates for google-provider 2.0
 * Removed vault-admin IAM policy bindings in favour of non-authoritative IAM member resource
+* Add default value update_policy
 
 ## v1.0.2
 * Use network and subnetowrk to allow the usage of custom VPC
